@@ -117,13 +117,13 @@ const ProjectPage: React.FC = () => {
     })).slice()
       .filter((c: any) => c.valid)
       .sort((a: any, b: any) => {
-      const docA = a.doc.toLowerCase()
-      const docB = b.doc.toLowerCase()
+        const docA = a.doc.toLowerCase()
+        const docB = b.doc.toLowerCase()
 
-      if (docA < docB) return -1
-      if (docA > docB) return 1
-      return 0
-    }) ?? [];
+        if (docA < docB) return -1
+        if (docA > docB) return 1
+        return 0
+      }) ?? [];
 
   // Commands
   const contributeCommand =
@@ -134,7 +134,7 @@ const ProjectPage: React.FC = () => {
   const authCommand = `phase2cli auth`;
   const beaconValue = finalBeacon?.beacon
   const beaconHash = finalBeacon?.beaconHash
- 
+
   // Hook for clipboard
   const { onCopy: copyContribute, hasCopied: copiedContribute } = useClipboard(contributeCommand);
   const { onCopy: copyInstall, hasCopied: copiedInstall } = useClipboard(installCommand);
@@ -214,8 +214,8 @@ const ProjectPage: React.FC = () => {
                 <VStack
                   className={
                     user && !hasUserContributed && largestCircuitConstraints < maxConstraintsForBrowser ?
-                    "browserContributeCopyButton" :
-                    "contributeCopyButton"
+                      "browserContributeCopyButton" :
+                      "contributeCopyButton"
                   }
                   // align="start"
                   spacing={2}
@@ -226,57 +226,60 @@ const ProjectPage: React.FC = () => {
                     project.ceremony.data.state === CeremonyState.OPENED && user && !hasUserContributed && largestCircuitConstraints < maxConstraintsForBrowser ?
                       <Contribution ceremonyId={project.ceremony.uid} /> :
                       project.ceremony.data.state !== CeremonyState.OPENED ?
-                      <Text color="gray.500" fontSize={12} fontWeight="bold">
-                        This ceremony is {project.ceremony.data.state.toLocaleLowerCase()}.
-                      </Text> :
-                      hasUserContributed ?
-                      <Text color="gray.500" fontSize={12} fontWeight="bold">
-                        You have already contributed to this ceremony. Thank you for your participation.
-                      </Text> :
-                      <>
-                        <Text color="gray.500">
-                          You can contribute to this project by running the CLI commands below.
-                        </Text>
-                      
-                        <Button 
-                          leftIcon={<Box as={FaCopy} w={3} h={3} />}
-                          variant="outline"
-                          fontSize={12}
-                          fontWeight={"regular"}
-                          onClick={copyInstall}
-                        >
-                          {
-                            copiedInstall ?
-                            "Copied"
-                            : `> npm install -g @p0tion/phase2cli`
-                          }
-                        </Button>
-                        <Button 
-                          leftIcon={<Box as={FaCopy} w={3} h={3} />}
-                          variant="outline"
-                          fontSize={12}
-                          fontWeight={"regular"}
-                          onClick={copyAuth}
-                        >
-                          {
-                            copiedAuth ?
-                            "Copied"
-                            : `> phase2cli auth`
-                          }
-                        </Button>
-                        <Button
-                          leftIcon={<Box as={FaCopy} w={3} h={3} />}
-                          variant="outline"
-                          onClick={copyContribute}
-                          fontSize={12}
-                          fontWeight={"regular"}
-                        >
-                          {copiedContribute
-                            ? "Copied"
-                            : `> phase2cli contribute`
-                          }
-                        </Button>
-                    </>  
+                        <Text color="gray.500" fontSize={12} fontWeight="bold">
+                          This ceremony is {project.ceremony.data.state.toLocaleLowerCase()}.
+                        </Text> :
+                        hasUserContributed ?
+                          <Text color="gray.500" fontSize={12} fontWeight="bold">
+                            You have already contributed to this ceremony. Thank you for your participation.
+                          </Text> :
+                          <>
+                            <Text>
+                              Login at the top right to contribute to this ceremony through the browser.
+                            </Text>
+                            <Text color="gray.500">
+                              Alternatively, you can contribute to this project by running the CLI commands below. This also requires a GitHub account.
+                            </Text>
+
+                            <Button
+                              leftIcon={<Box as={FaCopy} w={3} h={3} />}
+                              variant="outline"
+                              fontSize={12}
+                              fontWeight={"regular"}
+                              onClick={copyInstall}
+                            >
+                              {
+                                copiedInstall ?
+                                  "Copied"
+                                  : `> npm install -g @galactica-net/phase2cli`
+                              }
+                            </Button>
+                            <Button
+                              leftIcon={<Box as={FaCopy} w={3} h={3} />}
+                              variant="outline"
+                              fontSize={12}
+                              fontWeight={"regular"}
+                              onClick={copyAuth}
+                            >
+                              {
+                                copiedAuth ?
+                                  "Copied"
+                                  : `> phase2cli auth`
+                              }
+                            </Button>
+                            <Button
+                              leftIcon={<Box as={FaCopy} w={3} h={3} />}
+                              variant="outline"
+                              onClick={copyContribute}
+                              fontSize={12}
+                              fontWeight={"regular"}
+                            >
+                              {copiedContribute
+                                ? "Copied"
+                                : `> phase2cli contribute`
+                              }
+                            </Button>
+                          </>
                   }
                 </VStack>
                 <VStack spacing={2} py={2} alignSelf={"stretch"}>
@@ -307,11 +310,11 @@ const ProjectPage: React.FC = () => {
                 </VStack>
               </>
             )}
-            <VStack 
+            <VStack
               maxW={["390px", "390px", "100%"]}
               minW={["390px", "390px", null]}
-            > 
-              <ScrollingAvatars images={avatars}/>
+            >
+              <ScrollingAvatars images={avatars} />
             </VStack>
             <VStack
               minH={[null, null, "100vh"]}
@@ -454,7 +457,7 @@ const ProjectPage: React.FC = () => {
                     </Box>
                   </TabPanel>
                   <TabPanel>
-                  <VStack
+                    <VStack
                       alignSelf={"stretch"}
                       alignItems={"center"}
                       justifyContent={"center"}
@@ -462,60 +465,60 @@ const ProjectPage: React.FC = () => {
                       py={0}
                     >
                       <Box alignItems="center" alignSelf={"stretch"} w="full">
-                      <SimpleGrid
-                        alignSelf={"stretch"}
-                        maxW={["392px", "390px", "100%"]}
-                        columns={1}
-                        spacing={6}
-                      >
-                        {circuitsClean.map((circuit, index) => (
-                          <Box key={index} borderWidth={1} borderRadius="lg" p={4}>
-                            <Heading fontSize={16} size="md" mb={2}>
-                              {circuit.name} - {circuit.description}
-                            </Heading>
-                            <SimpleGrid columns={[2, 2]} spacing={4}>
-                              <Flex justify="space-between" align="center">
+                        <SimpleGrid
+                          alignSelf={"stretch"}
+                          maxW={["392px", "390px", "100%"]}
+                          columns={1}
+                          spacing={6}
+                        >
+                          {circuitsClean.map((circuit, index) => (
+                            <Box key={index} borderWidth={1} borderRadius="lg" p={4}>
+                              <Heading fontSize={16} size="md" mb={2}>
+                                {circuit.name} - {circuit.description}
+                              </Heading>
+                              <SimpleGrid columns={[2, 2]} spacing={4}>
+                                <Flex justify="space-between" align="center">
+                                  <Stat>
+                                    <StatLabel fontSize={12}>Parameters</StatLabel>
+                                    <StatNumber fontSize={16}>
+                                      {
+                                        circuit.template.paramsConfiguration && circuit.template.paramsConfiguration.length > 0 ?
+                                          circuit.template.paramsConfiguration.join(" ") :
+                                          circuit.template.paramConfiguration && circuit.template.paramConfiguration.length > 0 ?
+                                            circuit.template.paramConfiguration.join(" ") :
+                                            "No parameters"
+                                      }
+                                    </StatNumber>
+                                  </Stat>
+                                </Flex>
                                 <Stat>
-                                  <StatLabel fontSize={12}>Parameters</StatLabel>
+                                  <StatLabel fontSize={12}>Commit Hash</StatLabel>
                                   <StatNumber fontSize={16}>
-                                    {
-                                      circuit.template.paramsConfiguration && circuit.template.paramsConfiguration.length > 0 ?
-                                      circuit.template.paramsConfiguration.join(" ") :
-                                      circuit.template.paramConfiguration && circuit.template.paramConfiguration.length > 0 ?
-                                      circuit.template.paramConfiguration.join(" ") :
-                                      "No parameters"
-                                    }
+                                    <a href={`${parseRepoRoot(circuit.template.source)}/tree/${circuit.template.commitHash}`} target="_blank">
+                                      {truncateString(circuit.template.commitHash, 6)}
+                                    </a>
                                   </StatNumber>
                                 </Stat>
-                              </Flex>
-                              <Stat>
-                                <StatLabel fontSize={12}>Commit Hash</StatLabel>
-                                <StatNumber fontSize={16}>
-                                  <a href={`${parseRepoRoot(circuit.template.source)}/tree/${circuit.template.commitHash}`} target="_blank">
-                                    {truncateString(circuit.template.commitHash, 6)}
-                                  </a>
-                                </StatNumber>
-                              </Stat>
-                              <Stat>
-                                <StatLabel fontSize={12}>Template Link</StatLabel>
-                                <StatNumber fontSize={16}>
-                                  <a href={circuit.template.source} target="_blank">
-                                  {truncateString(circuit.template.source, 16)}
-                                  </a>
-                                </StatNumber>
-                              </Stat>
-                              <Stat>
-                                <StatLabel fontSize={12}>Compiler Version</StatLabel>
-                                <StatNumber fontSize={16}>
-                                  {circuit.compiler.version}
-                                </StatNumber>
-                              </Stat>
-                            </SimpleGrid>
-                          </Box>
-                        ))}
-                      </SimpleGrid>
-                    </Box>
-                      
+                                <Stat>
+                                  <StatLabel fontSize={12}>Template Link</StatLabel>
+                                  <StatNumber fontSize={16}>
+                                    <a href={circuit.template.source} target="_blank">
+                                      {truncateString(circuit.template.source, 16)}
+                                    </a>
+                                  </StatNumber>
+                                </Stat>
+                                <Stat>
+                                  <StatLabel fontSize={12}>Compiler Version</StatLabel>
+                                  <StatNumber fontSize={16}>
+                                    {circuit.compiler.version}
+                                  </StatNumber>
+                                </Stat>
+                              </SimpleGrid>
+                            </Box>
+                          ))}
+                        </SimpleGrid>
+                      </Box>
+
                     </VStack>
                   </TabPanel>
                   <TabPanel textAlign={"center"}>
@@ -523,9 +526,9 @@ const ProjectPage: React.FC = () => {
                       project?.ceremony.data.state === CeremonyState.FINALIZED && beaconHash && beaconValue &&
                       <div>
                         <Text fontSize={14} fontWeight="bold">
-                        Final contribution beacon
+                          Final contribution beacon
                         </Text>
-                        <Button 
+                        <Button
                           margin={4}
                           leftIcon={<Box as={FaCopy} w={3} h={3} />}
                           variant="outline"
@@ -535,11 +538,11 @@ const ProjectPage: React.FC = () => {
                         >
                           {
                             copiedBeaconValue ?
-                            "Copied"
-                            : `Beacon ${finalBeacon?.beacon}`
+                              "Copied"
+                              : `Beacon ${finalBeacon?.beacon}`
                           }
                         </Button>
-                        <Button 
+                        <Button
                           margin={4}
                           leftIcon={<Box as={FaCopy} w={3} h={3} />}
                           variant="outline"
@@ -549,8 +552,8 @@ const ProjectPage: React.FC = () => {
                         >
                           {
                             copiedBeaconHash ?
-                            "Copied"
-                            : `Beacon hash ${truncateString(finalBeacon?.beaconHash)}`
+                              "Copied"
+                              : `Beacon hash ${truncateString(finalBeacon?.beaconHash)}`
                           }
                         </Button>
                       </div>
@@ -578,9 +581,9 @@ const ProjectPage: React.FC = () => {
                                 project?.ceremony.data.state !== CeremonyState.FINALIZED ? true : false
                               }
                             >
-                            Download {zkey.zkeyFilename}
-                          </Button>
-                        </a>
+                              Download {zkey.zkeyFilename}
+                            </Button>
+                          </a>
                         )
                       })
                     }
@@ -588,7 +591,7 @@ const ProjectPage: React.FC = () => {
                       project?.ceremony.data.state === CeremonyState.FINALIZED &&
                       <>
                         <Text p={4} fontSize={14} fontWeight="bold">
-                        Download Last ZKey(s)
+                          Download Last ZKey(s)
                         </Text>
                         <Text color="gray.500">
                           You can use this zKey(s) with the beacon value to verify that the final zKey(s) was computed correctly.
@@ -619,7 +622,7 @@ const ProjectPage: React.FC = () => {
                         }
                       </>
                     }
-                   
+
                   </TabPanel>
                 </TabPanels>
               </Tabs>
