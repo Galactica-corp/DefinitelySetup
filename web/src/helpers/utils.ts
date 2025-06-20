@@ -1,114 +1,114 @@
 import { getAuth } from "firebase/auth";
 import { commonTerms, finalContributionIndex, genesisZkeyIndex, localPaths, minFollowers, minFollowing, minRepos } from "./constants";
-import {firebaseApp, getCeremonyCircuits, getCircuitContributionsFromContributor, getCircuitsCollectionPath, getDocumentById } from "./firebase";
+import { firebaseApp, getCeremonyCircuits, getCircuitContributionsFromContributor, getCircuitsCollectionPath, getDocumentById } from "./firebase";
 import { completeMultiPartUpload, generateGetObjectPreSignedUrl, generatePreSignedUrlsParts, openMultiPartUpload, temporaryStoreCurrentContributionMultiPartUploadId, temporaryStoreCurrentContributionUploadedChunkData } from "./functions";
 import { ChunkWithUrl, Contribution, ContributionValidity, ETagWithPartNumber, FirebaseDocumentInfo, TemporaryParticipantContributionData, Timing } from "./interfaces";
 import { request } from "@octokit/request"
 
 export function truncateString(str: string, numCharacters = 5): string {
-    if (str.length <= numCharacters * 2) {
-        return str;
-    }
-    
-    const firstPart = str.slice(0, numCharacters);
-    const lastPart = str.slice(-numCharacters);
-    
-    return `${firstPart}...${lastPart}`;
+  if (str.length <= numCharacters * 2) {
+    return str;
+  }
+
+  const firstPart = str.slice(0, numCharacters);
+  const lastPart = str.slice(-numCharacters);
+
+  return `${firstPart}...${lastPart}`;
 }
 
 export function parseRepoRoot(templateSource: string): string | null {
   const match = templateSource.match(/^(https:\/\/github\.com\/[^\/]+\/[^\/]+)(?:\/|$)/);
   return match ? match[1] : null;
 }
-    
+
 export function parseDate(dateString: number): string {
-    const parsedDate = new Date(dateString);
-    return parsedDate.toDateString();
+  const parsedDate = new Date(dateString);
+  return parsedDate.toDateString();
 }
-    
+
 export const formatDate = (date: Date): string =>
-    `${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(
-        2,
-        "0"
-    )}.${String(date.getFullYear()).slice(-2)}`;
-    
+  `${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(
+    2,
+    "0"
+  )}.${String(date.getFullYear()).slice(-2)}`;
+
 export function bytesToMegabytes(bytes: number): number {
-    return bytes / Math.pow(1024, 2);
+  return bytes / Math.pow(1024, 2);
 }
 
 export function toBackgroundImagefromSrc(src: string) {
-    return "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('" + src + "')";
+  return "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('" + src + "')";
 }
 
 // Get a human-readable string indicating how far in the future or past a date is
 export const getTimeDifference = (date: Date): string => {
-    const currentDate = new Date();
-    const differenceInTime = date.getTime() - currentDate.getTime();
-    const differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
-  
-    if (differenceInDays < 0) return `${Math.abs(differenceInDays)} days ago`;
-    if (differenceInDays > 0) return `${differenceInDays} days from now`;
-    return "Today";
-  };
+  const currentDate = new Date();
+  const differenceInTime = date.getTime() - currentDate.getTime();
+  const differenceInDays = Math.round(differenceInTime / (1000 * 3600 * 24));
+
+  if (differenceInDays < 0) return `${Math.abs(differenceInDays)} days ago`;
+  if (differenceInDays > 0) return `${differenceInDays} days from now`;
+  return "Today";
+};
 
 // steps for the tutorial on the search bar
-export const searchBarSteps =  [
-    {
-        target: ".tutorialSearchBar",
-        content: "Search for your favorite setup",
-    }
+export const searchBarSteps = [
+  {
+    target: ".tutorialSearchBar",
+    content: "Search for your favorite setup",
+  }
 ]
 
 // steps for the tutorial on the projects page
-export const projectsPageSteps =  [
-    {
-        target: ".tutorialDescription",
-        content: "Here you can find a description of the project",
-    },
-    {
-        target: ".tutorialButtons",
-        content: "Click here to read the instructions on how to contribute or watch a live ceremony",
-    },
-    {
-        target: ".tutorialLiveLook",
-        content: "Here you can see the live status of a ceremony",
-    },
-    {
-        target: ".tutorialContributionsList",
-        content: "Here you can see the list of contributions to this ceremony",
-    }
+export const projectsPageSteps = [
+  {
+    target: ".tutorialDescription",
+    content: "Here you can find a description of the project",
+  },
+  {
+    target: ".tutorialButtons",
+    content: "Click here to read the instructions on how to contribute or watch a live ceremony",
+  },
+  {
+    target: ".tutorialLiveLook",
+    content: "Here you can see the live status of a ceremony",
+  },
+  {
+    target: ".tutorialContributionsList",
+    content: "Here you can see the list of contributions to this ceremony",
+  }
 ]
 
 // steps for the tutorial on the single project details page
 export const singleProjectPageSteps = [
-    {
-        target: ".loginButton",
-        content: "Click Login here to be able to contribute via your Browser"
-    },
-    {
-        target: ".contributeCopyButton",
-        content: "Here you can copy the command needed to contribute to this ceremony",
-    },
-    {
-        target: ".browserContributeCopyButton",
-        content: "Here you can contribute to the ceremony directly on your Browser"
-    },
-    {
-        target: ".circuitsView",
-        content: "Click here to view the circuits for this ceremony and their live statistics",
-    },
-    {
-        target: ".contributionsButton",
-        content: "Click here to view the completed contributions",
-    },
-    {
-        target: ".linksButton",
-        content: "Click here to view the details of the circuits",
-    },
-    {
-        target: ".zKeyNavigationButton",
-        content: "Click here to download the final zKey for this circuit (only if the ceremony has been finalized)",
-    }
+  {
+    target: ".loginButton",
+    content: "Click Login here to be able to contribute via your Browser"
+  },
+  {
+    target: ".contributeCopyButton",
+    content: "Here you can copy the command needed to contribute to this ceremony",
+  },
+  {
+    target: ".browserContributeCopyButton",
+    content: "Here you can contribute to the ceremony directly on your Browser"
+  },
+  {
+    target: ".circuitsView",
+    content: "Click here to view the circuits for this ceremony and their live statistics",
+  },
+  {
+    target: ".contributionsButton",
+    content: "Click here to view the completed contributions",
+  },
+  {
+    target: ".linksButton",
+    content: "Click here to view the details of the circuits",
+  },
+  {
+    target: ".zKeyNavigationButton",
+    content: "Click here to download the final zKey for this circuit (only if the ceremony has been finalized)",
+  }
 ]
 
 /**
@@ -119,39 +119,39 @@ export const singleProjectPageSteps = [
  * @returns {any} - the results and errors
  */
 export const processItems = async (
-    items: (any[] | any)[], 
-    process: any,
-    unwrap: boolean = false
+  items: (any[] | any)[],
+  process: any,
+  unwrap: boolean = false
 ): Promise<any> => {
-    // we store the errors and the results
-    const errors: any = []
-    const results: any = []
+  // we store the errors and the results
+  const errors: any = []
+  const results: any = []
 
-    // index starts at 0 (first args to process)
-    let index: number = 0
-    
-    // recursively execute the function on the items
-    const exec = async (): Promise<any> => {
-        if (index === items.length) return 
-        const item = items[index++]
+  // index starts at 0 (first args to process)
+  let index: number = 0
 
-        // store results
-        try { 
-            if (unwrap) results.push(await process(...item))
-            else results.push(await process(item))
-        }
-        catch (error) { errors.push(error) }
+  // recursively execute the function on the items
+  const exec = async (): Promise<any> => {
+    if (index === items.length) return
+    const item = items[index++]
 
-        // call itself
-        return exec() 
+    // store results
+    try {
+      if (unwrap) results.push(await process(...item))
+      else results.push(await process(item))
     }
+    catch (error) { errors.push(error) }
 
-    // create workers
-    const workers = Array.from( { length: Math.min(items.length, 50) }, exec)
+    // call itself
+    return exec()
+  }
 
-    // run all workers
-    await Promise.all(workers)
-    return { results, errors }
+  // create workers
+  const workers = Array.from({ length: Math.min(items.length, 50) }, exec)
+
+  // run all workers
+  await Promise.all(workers)
+  return { results, errors }
 }
 
 /**
@@ -161,14 +161,14 @@ export const processItems = async (
  * @returns <string> - the progression in a zKey index format (`XYZAB`).
  */
 export const formatZkeyIndex = (progress: number): string => {
-    let index = progress.toString()
+  let index = progress.toString()
 
-    // Pad with zeros if the progression has less digits.
-    while (index.length < genesisZkeyIndex.length) {
-        index = `0${index}`
-    }
+  // Pad with zeros if the progression has less digits.
+  while (index.length < genesisZkeyIndex.length) {
+    index = `0${index}`
+  }
 
-    return index
+  return index
 }
 
 /**
@@ -180,7 +180,7 @@ export const formatZkeyIndex = (progress: number): string => {
  * @returns <string> - the storage path of the zKey file.
  */
 export const getZkeyStorageFilePath = (circuitPrefix: string, completeZkeyFilename: string): string =>
-    `${"circuits"}/${circuitPrefix}/${"contributions"}/${completeZkeyFilename}`
+  `${"circuits"}/${circuitPrefix}/${"contributions"}/${completeZkeyFilename}`
 
 
 /**
@@ -189,7 +189,7 @@ export const getZkeyStorageFilePath = (circuitPrefix: string, completeZkeyFilena
  * @returns <string> - the complete contribution path to the file.
  */
 export const getContributionLocalFilePath = (completeFilename: string): string =>
-    `${localPaths.contributions}/${completeFilename}`
+  `${localPaths.contributions}/${completeFilename}`
 
 
 /**
@@ -199,7 +199,7 @@ export const getContributionLocalFilePath = (completeFilename: string): string =
  * @returns <string>
  */
 export const getBucketName = (ceremonyPrefix: string, ceremonyPostfix: string): string =>
-    `${ceremonyPrefix}${ceremonyPostfix}`
+  `${ceremonyPrefix}${ceremonyPostfix}`
 
 
 /**
@@ -209,43 +209,43 @@ export const getBucketName = (ceremonyPrefix: string, ceremonyPostfix: string): 
  * @param storagePath <string> - the storage path that locates the artifact to be downloaded in the bucket.
  */
 export const downloadCeremonyArtifact = async (
-    bucketName: string,
-    storagePath: string,
-    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
+  bucketName: string,
+  storagePath: string,
+  setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
 ): Promise<Uint8Array> => {
-    // Request pre-signed url to make GET download request.
-    const getPreSignedUrl = await generateGetObjectPreSignedUrl(bucketName, storagePath)
+  // Request pre-signed url to make GET download request.
+  const getPreSignedUrl = await generateGetObjectPreSignedUrl(bucketName, storagePath)
 
-    const response = await fetch(getPreSignedUrl);
-    const totalLength = Number(response.headers.get("Content-Length"))
+  const response = await fetch(getPreSignedUrl);
+  const totalLength = Number(response.headers.get("Content-Length"))
 
-    if (!response.body) throw Error("ReadableStream not yet supported in this browser.")
+  if (!response.body) throw Error("ReadableStream not yet supported in this browser.")
 
-    const reader = response.body.getReader()
-    let chunks: Uint8Array[] = []
-    let receivedLength = 0
+  const reader = response.body.getReader()
+  let chunks: Uint8Array[] = []
+  let receivedLength = 0
 
-    while (true) {
-        const { done, value } = await reader.read()
+  while (true) {
+    const { done, value } = await reader.read()
 
-        if (done) break
-        
+    if (done) break
 
-        chunks.push(value!)
-        receivedLength += value!.length
 
-        setStatus(`Downloading: (${(receivedLength / totalLength * 100).toFixed(2)}%)`, true)
-    }
+    chunks.push(value!)
+    receivedLength += value!.length
 
-    let chunksAll = new Uint8Array(receivedLength)
-    let position = 0;
+    setStatus(`Downloading: (${(receivedLength / totalLength * 100).toFixed(2)}%)`, true)
+  }
 
-    for (let chunk of chunks) {
-        chunksAll.set(chunk, position)
-        position += chunk.length
-    }
+  let chunksAll = new Uint8Array(receivedLength)
+  let position = 0;
 
-    return chunksAll
+  for (let chunk of chunks) {
+    chunksAll.set(chunk, position)
+    position += chunk.length
+  }
+
+  return chunksAll
 }
 
 
@@ -257,7 +257,7 @@ export const downloadCeremonyArtifact = async (
  * @returns <string> - the participants collection path.
  */
 export const getParticipantsCollectionPath = (ceremonyId: string): string =>
-    `${commonTerms.collections.ceremonies.name}/${ceremonyId}/${commonTerms.collections.participants.name}`
+  `${commonTerms.collections.ceremonies.name}/${ceremonyId}/${commonTerms.collections.participants.name}`
 
 /**
  * Get contributions collection path for database reference.
@@ -268,7 +268,7 @@ export const getParticipantsCollectionPath = (ceremonyId: string): string =>
  * @returns <string> - the contributions collection path.
  */
 export const getContributionsCollectionPath = (ceremonyId: string, circuitId: string): string =>
-    `${getCircuitsCollectionPath(ceremonyId)}/${circuitId}/${commonTerms.collections.contributions.name}`
+  `${getCircuitsCollectionPath(ceremonyId)}/${circuitId}/${commonTerms.collections.contributions.name}`
 
 
 /**
@@ -280,7 +280,7 @@ export const getContributionsCollectionPath = (ceremonyId: string, circuitId: st
  * @returns <string> - the timeouts collection path.
  */
 export const getTimeoutsCollectionPath = (ceremonyId: string, participantId: string): string =>
-    `${getParticipantsCollectionPath(ceremonyId)}/${participantId}/${commonTerms.collections.timeouts.name}`
+  `${getParticipantsCollectionPath(ceremonyId)}/${participantId}/${commonTerms.collections.timeouts.name}`
 
 
 /**
@@ -290,56 +290,56 @@ export const getTimeoutsCollectionPath = (ceremonyId: string, participantId: str
  * @returns {string} - the contribution hash
  */
 export function formatHash(b: any, title: any) {
-    const a = new DataView(b.buffer, b.byteOffset, b.byteLength);
-    let S = "";
-    for (let i=0; i<4; i++) {
-        if (i>0) S += "\n";
-        S += "\t\t";
-        for (let j=0; j<4; j++) {
-            if (j>0) S += " ";
-            S += a.getUint32(i*16+j*4).toString(16).padStart(8, "0");
-        }
+  const a = new DataView(b.buffer, b.byteOffset, b.byteLength);
+  let S = "";
+  for (let i = 0; i < 4; i++) {
+    if (i > 0) S += "\n";
+    S += "\t\t";
+    for (let j = 0; j < 4; j++) {
+      if (j > 0) S += " ";
+      S += a.getUint32(i * 16 + j * 4).toString(16).padStart(8, "0");
     }
-    if (title) S = title + "\n" + S;
-    return S;
+  }
+  if (title) S = title + "\n" + S;
+  return S;
 }
 
 
 export const getChunksAndPreSignedUrls = async (
-    bucketName: string,
-    objectKey: string,
-    fileContent: Uint8Array,  // The file content as a string
-    uploadId: string,
-    configStreamChunkSize: number = 25,
-    ceremonyId?: string
-    ): Promise<Array<ChunkWithUrl>> => {
-    // Calculate the number of chunks
-    const chunkSize = configStreamChunkSize * 1024 * 1024 
-    const numChunks = Math.ceil(fileContent.length / chunkSize)
+  bucketName: string,
+  objectKey: string,
+  fileContent: Uint8Array,  // The file content as a string
+  uploadId: string,
+  configStreamChunkSize: number = 25,
+  ceremonyId?: string
+): Promise<Array<ChunkWithUrl>> => {
+  // Calculate the number of chunks
+  const chunkSize = configStreamChunkSize * 1024 * 1024
+  const numChunks = Math.ceil(fileContent.length / chunkSize)
 
-    // Split fileData into chunks
-    const chunks = Array.from({ length: numChunks }, (_, i) =>
-        fileContent.subarray(i * chunkSize, (i + 1) * chunkSize)
-    )
+  // Split fileData into chunks
+  const chunks = Array.from({ length: numChunks }, (_, i) =>
+    fileContent.subarray(i * chunkSize, (i + 1) * chunkSize)
+  )
 
-    // Check if the file is not empty
-    if (!chunks.length) throw new Error("Unable to split an empty file into chunks.");
-    
-    // Request pre-signed URL generation for each chunk
-    const preSignedUrls: Array<string> = await generatePreSignedUrlsParts(
-        bucketName,
-        objectKey,
-        uploadId,
-        chunks.length,
-        ceremonyId
-    )
+  // Check if the file is not empty
+  if (!chunks.length) throw new Error("Unable to split an empty file into chunks.");
 
-    // Map pre-signed URLs with corresponding chunks
-    return chunks.map((val1, index) => ({
-        partNumber: index + 1,
-        chunk: val1,
-        preSignedUrl: preSignedUrls[index],
-    }))
+  // Request pre-signed URL generation for each chunk
+  const preSignedUrls: Array<string> = await generatePreSignedUrlsParts(
+    bucketName,
+    objectKey,
+    uploadId,
+    chunks.length,
+    ceremonyId
+  )
+
+  // Map pre-signed URLs with corresponding chunks
+  return chunks.map((val1, index) => ({
+    partNumber: index + 1,
+    chunk: val1,
+    preSignedUrl: preSignedUrls[index],
+  }))
 }
 
 /**
@@ -350,54 +350,54 @@ export const getChunksAndPreSignedUrls = async (
  * @returns <Promise<Array<ETagWithPartNumber>>> - the completed (uploaded) chunks information.
  */
 export const uploadParts = async (
-    chunksWithUrls: Array<ChunkWithUrl>,
-    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void,
-    ceremonyId?: string,
-    alreadyUploadedChunks?: Array<ETagWithPartNumber>,
+  chunksWithUrls: Array<ChunkWithUrl>,
+  setStatus: (message: string, loading?: boolean, attestationLink?: string) => void,
+  ceremonyId?: string,
+  alreadyUploadedChunks?: Array<ETagWithPartNumber>,
 ): Promise<Array<ETagWithPartNumber>> => {
-    // Keep track of uploaded chunks.
-    const uploadedChunks: Array<ETagWithPartNumber> = alreadyUploadedChunks || []
+  // Keep track of uploaded chunks.
+  const uploadedChunks: Array<ETagWithPartNumber> = alreadyUploadedChunks || []
 
-    const totalChunks = chunksWithUrls.length
+  const totalChunks = chunksWithUrls.length
 
-    // Loop through remaining chunks.
-    for (let i = alreadyUploadedChunks ? alreadyUploadedChunks.length : 0; i < chunksWithUrls.length; i += 1) {
-        setStatus(`Uploading chunk ${i + 1} of ${totalChunks}...`, true)
-        // Consume the pre-signed url to upload the chunk.
-        // @ts-ignore
-        const response = await fetch(chunksWithUrls[i].preSignedUrl, {
-            method: "PUT",
-            body: chunksWithUrls[i].chunk,
-            headers: {
-                "Content-Type": "application/octet-stream",
-                "Content-Length": chunksWithUrls[i].chunk.length.toString()
-            },
-        })
+  // Loop through remaining chunks.
+  for (let i = alreadyUploadedChunks ? alreadyUploadedChunks.length : 0; i < chunksWithUrls.length; i += 1) {
+    setStatus(`Uploading chunk ${i + 1} of ${totalChunks}...`, true)
+    // Consume the pre-signed url to upload the chunk.
+    // @ts-ignore
+    const response = await fetch(chunksWithUrls[i].preSignedUrl, {
+      method: "PUT",
+      body: chunksWithUrls[i].chunk,
+      headers: {
+        "Content-Type": "application/octet-stream",
+        "Content-Length": chunksWithUrls[i].chunk.length.toString()
+      },
+    })
 
-        // Verify the response.
-        if (response.status !== 200 || !response.ok)
-            throw new Error(
-                `Unable to upload chunk number ${i}. Please, terminate the current session and retry to resume from the latest uploaded chunk.`
-            )
+    // Verify the response.
+    if (response.status !== 200 || !response.ok)
+      throw new Error(
+        `Unable to upload chunk number ${i}. Please, terminate the current session and retry to resume from the latest uploaded chunk.`
+      )
 
-        // Extract uploaded chunk data.
-        const chunk = {
-            ETag: response.headers.get("etag") || undefined,
-            PartNumber: chunksWithUrls[i].partNumber
-        }
-        uploadedChunks.push(chunk)
-
-        setStatus(`Uploaded chunk ${i + 1} of ${totalChunks}`, true)
-
-        // Temporary store uploaded chunk data to enable later resumable contribution.
-        // nb. this must be done only when contributing (not finalizing).
-        if (!!ceremonyId)
-            await temporaryStoreCurrentContributionUploadedChunkData(ceremonyId, chunk)
+    // Extract uploaded chunk data.
+    const chunk = {
+      ETag: response.headers.get("etag") || undefined,
+      PartNumber: chunksWithUrls[i].partNumber
     }
+    uploadedChunks.push(chunk)
 
-    return uploadedChunks
+    setStatus(`Uploaded chunk ${i + 1} of ${totalChunks}`, true)
+
+    // Temporary store uploaded chunk data to enable later resumable contribution.
+    // nb. this must be done only when contributing (not finalizing).
+    if (!!ceremonyId)
+      await temporaryStoreCurrentContributionUploadedChunkData(ceremonyId, chunk)
+  }
+
+  return uploadedChunks
 }
-  
+
 
 
 /**
@@ -419,64 +419,64 @@ export const uploadParts = async (
  * @param [temporaryDataToResumeMultiPartUpload] <TemporaryParticipantContributionData> - the temporary information necessary to resume an already started multi-part upload.
  */
 export const multiPartUpload = async (
-    bucketName: string,
-    objectKey: string,
-    fileData: Uint8Array,
-    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void,
-    ceremonyId?: string,
-    temporaryDataToResumeMultiPartUpload?: TemporaryParticipantContributionData
+  bucketName: string,
+  objectKey: string,
+  fileData: Uint8Array,
+  setStatus: (message: string, loading?: boolean, attestationLink?: string) => void,
+  ceremonyId?: string,
+  temporaryDataToResumeMultiPartUpload?: TemporaryParticipantContributionData
 ) => {
-    // The unique identifier of the multi-part upload.
-    let multiPartUploadId: string = ""
-    // The list of already uploaded chunks.
-    let alreadyUploadedChunks: Array<ETagWithPartNumber> = []
+  // The unique identifier of the multi-part upload.
+  let multiPartUploadId: string = ""
+  // The list of already uploaded chunks.
+  let alreadyUploadedChunks: Array<ETagWithPartNumber> = []
 
-    // Step (0).
-    if (temporaryDataToResumeMultiPartUpload && !!temporaryDataToResumeMultiPartUpload.uploadId) {
-        // Step (0.A).
-        multiPartUploadId = temporaryDataToResumeMultiPartUpload.uploadId
-        alreadyUploadedChunks = temporaryDataToResumeMultiPartUpload.chunks
-    } else {
-        // Step (0.B).
-        // Open a new multi-part upload for the ceremony artifact.
-        multiPartUploadId = await openMultiPartUpload(bucketName, objectKey, ceremonyId)
+  // Step (0).
+  if (temporaryDataToResumeMultiPartUpload && !!temporaryDataToResumeMultiPartUpload.uploadId) {
+    // Step (0.A).
+    multiPartUploadId = temporaryDataToResumeMultiPartUpload.uploadId
+    alreadyUploadedChunks = temporaryDataToResumeMultiPartUpload.chunks
+  } else {
+    // Step (0.B).
+    // Open a new multi-part upload for the ceremony artifact.
+    multiPartUploadId = await openMultiPartUpload(bucketName, objectKey, ceremonyId)
 
-        // Store multi-part upload identifier on document collection.
-        if (ceremonyId)
-            // Store Multi-Part Upload ID after generation.
-            await temporaryStoreCurrentContributionMultiPartUploadId(ceremonyId!, multiPartUploadId)
-    }
+    // Store multi-part upload identifier on document collection.
+    if (ceremonyId)
+      // Store Multi-Part Upload ID after generation.
+      await temporaryStoreCurrentContributionMultiPartUploadId(ceremonyId!, multiPartUploadId)
+  }
 
-    // Step (1).
-    const chunksWithUrlsZkey = await getChunksAndPreSignedUrls(
-        bucketName,
-        objectKey,
-        fileData,
-        multiPartUploadId,
-        25,
-        ceremonyId
-    )
+  // Step (1).
+  const chunksWithUrlsZkey = await getChunksAndPreSignedUrls(
+    bucketName,
+    objectKey,
+    fileData,
+    multiPartUploadId,
+    25,
+    ceremonyId
+  )
 
-    // Step (2).
-    const partNumbersAndETagsZkey = await uploadParts(
-        chunksWithUrlsZkey,
-        setStatus,
-        ceremonyId,
-        alreadyUploadedChunks
-    )
+  // Step (2).
+  const partNumbersAndETagsZkey = await uploadParts(
+    chunksWithUrlsZkey,
+    setStatus,
+    ceremonyId,
+    alreadyUploadedChunks
+  )
 
-    // Step (3).
-    await completeMultiPartUpload(
-        bucketName,
-        objectKey,
-        multiPartUploadId,
-        partNumbersAndETagsZkey,
-        ceremonyId
-    )
+  // Step (3).
+  await completeMultiPartUpload(
+    bucketName,
+    objectKey,
+    multiPartUploadId,
+    partNumbersAndETagsZkey,
+    ceremonyId
+  )
 }
 
 export const sleep = async (time: number) => {
-    await new Promise(resolve => setTimeout(resolve, time))
+  await new Promise(resolve => setTimeout(resolve, time))
 }
 
 /**
@@ -485,25 +485,25 @@ export const sleep = async (time: number) => {
  * @returns <Timing> - a custom object containing the amount of seconds, minutes, hours and days in the provided millis.
  */
 export const getSecondsMinutesHoursFromMillis = (millis: number): Timing => {
-    let delta = millis / 1000
+  let delta = millis / 1000
 
-    const days = Math.floor(delta / 86400)
-    delta -= days * 86400
+  const days = Math.floor(delta / 86400)
+  delta -= days * 86400
 
-    const hours = Math.floor(delta / 3600) % 24
-    delta -= hours * 3600
+  const hours = Math.floor(delta / 3600) % 24
+  delta -= hours * 3600
 
-    const minutes = Math.floor(delta / 60) % 60
-    delta -= minutes * 60
+  const minutes = Math.floor(delta / 60) % 60
+  delta -= minutes * 60
 
-    const seconds = Math.floor(delta) % 60
+  const seconds = Math.floor(delta) % 60
 
-    return {
-        seconds: seconds >= 60 ? 59 : seconds,
-        minutes: minutes >= 60 ? 59 : minutes,
-        hours: hours >= 24 ? 23 : hours,
-        days
-    }
+  return {
+    seconds: seconds >= 60 ? 59 : seconds,
+    minutes: minutes >= 60 ? 59 : minutes,
+    hours: hours >= 24 ? 23 : hours,
+    days
+  }
 }
 
 /**
@@ -522,44 +522,44 @@ export const convertToDoubleDigits = (amount: number): string => (amount < 10 ? 
  * @returns <Promise<Array<ContributionValidity>>> - a list of contributor contributions together with contribution validity (based on coordinator verification).
  */
 export const getContributionsValidityForContributor = async (
-    circuits: Array<FirebaseDocumentInfo>,
-    ceremonyId: string,
-    participantId: string,
-    isFinalizing: boolean
+  circuits: Array<FirebaseDocumentInfo>,
+  ceremonyId: string,
+  participantId: string,
+  isFinalizing: boolean
 ): Promise<Array<ContributionValidity>> => {
-    const contributionsValidity: Array<ContributionValidity> = []
+  const contributionsValidity: Array<ContributionValidity> = []
 
-    for await (const circuit of circuits) {
-        // Get circuit contribution from contributor.
-        const circuitContributionsFromContributor = await getCircuitContributionsFromContributor(
-            ceremonyId,
-            circuit.id,
-            participantId
+  for await (const circuit of circuits) {
+    // Get circuit contribution from contributor.
+    const circuitContributionsFromContributor = await getCircuitContributionsFromContributor(
+      ceremonyId,
+      circuit.id,
+      participantId
+    )
+
+    // Check for ceremony finalization (= there could be more than one contribution).
+    const contribution = isFinalizing
+      ? circuitContributionsFromContributor
+        .filter(
+          (contributionDocument: FirebaseDocumentInfo) =>
+            contributionDocument.data.zkeyIndex === finalContributionIndex
         )
+      [0]
+      : circuitContributionsFromContributor[0]
 
-        // Check for ceremony finalization (= there could be more than one contribution).
-        const contribution = isFinalizing
-            ? circuitContributionsFromContributor
-                  .filter(
-                      (contributionDocument: FirebaseDocumentInfo) =>
-                          contributionDocument.data.zkeyIndex === finalContributionIndex
-                  )
-                [0]
-            : circuitContributionsFromContributor[0]
+    if (!contribution)
+      throw new Error(
+        "Unable to retrieve contributions for the participant. There may have occurred a database-side error. Please, we kindly ask you to terminate the current session and repeat the process"
+      )
 
-        if (!contribution)
-            throw new Error(
-                "Unable to retrieve contributions for the participant. There may have occurred a database-side error. Please, we kindly ask you to terminate the current session and repeat the process"
-            )
+    contributionsValidity.push({
+      contributionId: contribution?.id,
+      circuitId: circuit.id,
+      valid: contribution?.data.valid
+    })
+  }
 
-        contributionsValidity.push({
-            contributionId: contribution?.id,
-            circuitId: circuit.id,
-            valid: contribution?.data.valid
-        })
-    }
-
-    return contributionsValidity
+  return contributionsValidity
 }
 
 /**
@@ -569,29 +569,29 @@ export const getContributionsValidityForContributor = async (
  * @param participantId <string> - the unique identifier of the contributor.
  */
 export const handleContributionValidity = async (
-    circuits: Array<FirebaseDocumentInfo>,
-    ceremonyId: string,
-    participantId: string,
-    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
+  circuits: Array<FirebaseDocumentInfo>,
+  ceremonyId: string,
+  participantId: string,
+  setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
 ) => {
-    // Get contributors' contributions validity.
-    const contributionsWithValidity = await getContributionsValidityForContributor(
-        circuits,
-        ceremonyId,
-        participantId,
-        false
-    )
+  // Get contributors' contributions validity.
+  const contributionsWithValidity = await getContributionsValidityForContributor(
+    circuits,
+    ceremonyId,
+    participantId,
+    false
+  )
 
-    // Filter only valid contributions.
-    const validContributions = contributionsWithValidity.filter(
-        (contributionWithValidity: ContributionValidity) => contributionWithValidity.valid
-    )
+  // Filter only valid contributions.
+  const validContributions = contributionsWithValidity.filter(
+    (contributionWithValidity: ContributionValidity) => contributionWithValidity.valid
+  )
 
-    if (!validContributions.length)
-        setStatus("You have provided some invalid contributions")
-    else {
-        setStatus("You have provided valid contributions for all circuits")
-    }
+  if (!validContributions.length)
+    setStatus("You have provided some invalid contributions")
+  else {
+    setStatus("You have provided valid contributions for all circuits")
+  }
 }
 
 /**
@@ -602,13 +602,12 @@ export const handleContributionValidity = async (
  * @returns <string> - the public attestation preamble.
  */
 export const getPublicAttestationPreambleForContributor = (
-    contributorIdentifier: string,
-    ceremonyName: string,
-    isFinalizing: boolean
+  contributorIdentifier: string,
+  ceremonyName: string,
+  isFinalizing: boolean
 ) =>
-    `Hey, I'm ${contributorIdentifier} and I have ${
-        isFinalizing ? "finalized" : "contributed to"
-    } the ${ceremonyName}${ceremonyName.toLowerCase().includes('trusted setup') || ceremonyName.toLowerCase().includes("ceremony") ? "." : " MPC Phase2 Trusted Setup ceremony."}\nThe following are my contribution signatures:`
+  `Hey, I'm ${contributorIdentifier} and I have ${isFinalizing ? "finalized" : "contributed to"
+  } the ${ceremonyName}${ceremonyName.toLowerCase().includes('trusted setup') || ceremonyName.toLowerCase().includes("ceremony") ? "." : " MPC Phase2 Trusted Setup ceremony."}\nThe following are my contribution signatures:`
 
 
 /**
@@ -623,69 +622,68 @@ export const getPublicAttestationPreambleForContributor = (
  * @returns <Promise<string>> - the public attestation for the contributor.
  */
 export const generateValidContributionsAttestation = async (
-    circuits: Array<FirebaseDocumentInfo>,
-    ceremonyId: string,
-    participantId: string,
-    participantContributions: Array<Contribution>,
-    contributorIdentifier: string,
-    ceremonyName: string,
-    isFinalizing: boolean
+  circuits: Array<FirebaseDocumentInfo>,
+  ceremonyId: string,
+  participantId: string,
+  participantContributions: Array<Contribution>,
+  contributorIdentifier: string,
+  ceremonyName: string,
+  isFinalizing: boolean
 ): Promise<string> => {
-    // Generate the attestation preamble for the contributor.
-    let publicAttestation = getPublicAttestationPreambleForContributor(
-        contributorIdentifier,
-        ceremonyName,
-        isFinalizing
+  // Generate the attestation preamble for the contributor.
+  let publicAttestation = getPublicAttestationPreambleForContributor(
+    contributorIdentifier,
+    ceremonyName,
+    isFinalizing
+  )
+
+  // Get contributors' contributions validity.
+  const contributionsWithValidity = await getContributionsValidityForContributor(
+    circuits,
+    ceremonyId,
+    participantId,
+    isFinalizing
+  )
+
+  for await (const contributionWithValidity of contributionsWithValidity) {
+    // Filter for the related contribution document info.
+    const matchedContributions = participantContributions.filter(
+      (contribution: Contribution) => contribution.doc === contributionWithValidity.contributionId
     )
 
-    // Get contributors' contributions validity.
-    const contributionsWithValidity = await getContributionsValidityForContributor(
-        circuits,
-        ceremonyId,
-        participantId,
-        isFinalizing
+    if (matchedContributions.length === 0)
+      throw new Error(
+        `Unable to retrieve given circuit contribution information. This could happen due to some errors while writing the information on the database.`
+      )
+
+    if (matchedContributions.length > 1)
+      throw new Error(`Duplicated circuit contribution information. Please, contact the coordinator.`)
+
+    const participantContribution = matchedContributions[0]
+
+    // Get circuit document (the one for which the contribution was calculated).
+    const circuitDocument = await getDocumentById(
+      getCircuitsCollectionPath(ceremonyId),
+      contributionWithValidity.circuitId
+    )
+    const contributionDocument = await getDocumentById(
+      getContributionsCollectionPath(ceremonyId, contributionWithValidity.circuitId),
+      participantContribution.doc
     )
 
-    for await (const contributionWithValidity of contributionsWithValidity) {
-        // Filter for the related contribution document info.
-        const matchedContributions = participantContributions.filter(
-            (contribution: Contribution) => contribution.doc === contributionWithValidity.contributionId
-        )
+    if (!contributionDocument.data() || !circuitDocument.data())
+      throw new Error(`Something went wrong when retrieving the data from the database`)
 
-        if (matchedContributions.length === 0)
-            throw new Error(
-                `Unable to retrieve given circuit contribution information. This could happen due to some errors while writing the information on the database.`
-            )
+    // Extract data.
+    const { sequencePosition, prefix } = circuitDocument.data()!
+    const { zkeyIndex } = contributionDocument.data()!
 
-        if (matchedContributions.length > 1)
-            throw new Error(`Duplicated circuit contribution information. Please, contact the coordinator.`)
+    // Update public attestation.
+    publicAttestation = `${publicAttestation}\n\nCircuit # ${sequencePosition} (${prefix})\nContributor # ${zkeyIndex > 0 ? Number(zkeyIndex) : zkeyIndex
+      }\n${participantContribution.hash}`
+  }
 
-        const participantContribution = matchedContributions[0]
-
-        // Get circuit document (the one for which the contribution was calculated).
-        const circuitDocument = await getDocumentById(
-            getCircuitsCollectionPath(ceremonyId),
-            contributionWithValidity.circuitId
-        )
-        const contributionDocument = await getDocumentById(
-            getContributionsCollectionPath(ceremonyId, contributionWithValidity.circuitId),
-            participantContribution.doc
-        )
-
-        if (!contributionDocument.data() || !circuitDocument.data())
-            throw new Error(`Something went wrong when retrieving the data from the database`)
-
-        // Extract data.
-        const { sequencePosition, prefix } = circuitDocument.data()!
-        const { zkeyIndex } = contributionDocument.data()!
-
-        // Update public attestation.
-        publicAttestation = `${publicAttestation}\n\nCircuit # ${sequencePosition} (${prefix})\nContributor # ${
-            zkeyIndex > 0 ? Number(zkeyIndex) : zkeyIndex
-        }\n${participantContribution.hash}`
-    }
-
-    return publicAttestation
+  return publicAttestation
 }
 
 /**
@@ -699,29 +697,29 @@ export const generateValidContributionsAttestation = async (
  * @returns <Promise<string>> - the public attestation.
  */
 export const generatePublicAttestation = async (
-    circuits: Array<FirebaseDocumentInfo>,
-    ceremonyId: string,
-    participantId: string,
-    participantContributions: Array<Contribution>,
-    contributorIdentifier: string,
-    ceremonyName: string,
-    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
+  circuits: Array<FirebaseDocumentInfo>,
+  ceremonyId: string,
+  participantId: string,
+  participantContributions: Array<Contribution>,
+  contributorIdentifier: string,
+  ceremonyName: string,
+  setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
 ): Promise<string> => {
-    // Display contribution validity.
-    await handleContributionValidity(circuits, ceremonyId, participantId, setStatus)
+  // Display contribution validity.
+  await handleContributionValidity(circuits, ceremonyId, participantId, setStatus)
 
-    await sleep(3000)
+  await sleep(3000)
 
-    // Get only valid contribution hashes.
-    return generateValidContributionsAttestation(
-        circuits,
-        ceremonyId,
-        participantId,
-        participantContributions,
-        contributorIdentifier,
-        ceremonyName,
-        false
-    )
+  // Get only valid contribution hashes.
+  return generateValidContributionsAttestation(
+    circuits,
+    ceremonyId,
+    participantId,
+    participantContributions,
+    contributorIdentifier,
+    ceremonyName,
+    false
+  )
 }
 
 /**
@@ -734,29 +732,29 @@ export const generatePublicAttestation = async (
  * @returns <Promise<string>> - the url where the gist has been published.
  */
 export const publishGist = async (
-    token: string,
-    content: string,
-    ceremonyTitle: string,
-    ceremonyPrefix: string
+  token: string,
+  content: string,
+  ceremonyTitle: string,
+  ceremonyPrefix: string
 ): Promise<string> => {
-    const response = await request("POST /gists", {
-        description: `Attestation for ${ceremonyTitle} MPC Phase 2 Trusted Setup ceremony`,
-        public: true,
-        files: {
-            [`${ceremonyPrefix}_${commonTerms.foldersAndPathsTerms.attestation}.log`]: {
-                content
-            }
-        },
-        
-        headers: {
-            authorization: `token ${token}`
-        }
-    })
+  const response = await request("POST /gists", {
+    description: `Attestation for ${ceremonyTitle} MPC Phase 2 Trusted Setup ceremony`,
+    public: true,
+    files: {
+      [`${ceremonyPrefix}_${commonTerms.foldersAndPathsTerms.attestation}.log`]: {
+        content
+      }
+    },
 
-    if (response.status !== 201 || !response.data.html_url)
-        throw new Error("Cannot publish gist")
+    headers: {
+      authorization: `token ${token}`
+    }
+  })
 
-    return response.data.html_url!
+  if (response.status !== 201 || !response.data.html_url)
+    throw new Error("Cannot publish gist")
+
+  return response.data.html_url!
 }
 
 /**
@@ -767,13 +765,13 @@ export const publishGist = async (
  * @returns <string> - the ready to share tweet url.
  */
 export const generateCustomUrlToTweetAboutParticipation = (
-    ceremonyName: string,
-    gistUrl: string,
-    isFinalizing: boolean
+  ceremonyName: string,
+  gistUrl: string,
+  isFinalizing: boolean
 ) =>
-    isFinalizing
-        ? `https://twitter.com/intent/tweet?text=I%20have%20finalized%20the%20${ceremonyName}${ceremonyName.toLowerCase().includes("trusted") || ceremonyName.toLowerCase().includes("setup") || ceremonyName.toLowerCase().includes("phase2") || ceremonyName.toLowerCase().includes("ceremony") ? "!" : "%20Phase%202%20Trusted%20Setup%20ceremony!"}%20You%20can%20view%20my%20final%20attestation%20here:%20${gistUrl}%20#Ethereum%20#ZKP%20#PSE`
-        : `https://twitter.com/intent/tweet?text=I%20contributed%20to%20the%20${ceremonyName}${ceremonyName.toLowerCase().includes("trusted") || ceremonyName.toLowerCase().includes("setup") || ceremonyName.toLowerCase().includes("phase2") || ceremonyName.toLowerCase().includes("ceremony") ? "!" : "%20Phase%202%20Trusted%20Setup%20ceremony!"}%20You%20can%20view%20the%20steps%20to%20contribute%20here:%20https://ceremony.pse.dev%20You%20can%20view%20my%20attestation%20here:%20${gistUrl}%20#Ethereum%20#ZKP`
+  isFinalizing
+    ? `https://twitter.com/intent/tweet?text=I%20have%20finalized%20the%20${ceremonyName}${ceremonyName.toLowerCase().includes("trusted") || ceremonyName.toLowerCase().includes("setup") || ceremonyName.toLowerCase().includes("phase2") || ceremonyName.toLowerCase().includes("ceremony") ? "!" : "%20Phase%202%20Trusted%20Setup%20ceremony!"}%20You%20can%20view%20my%20final%20attestation%20here:%20${gistUrl}%20#Ethereum%20#ZKP%20#PSE`
+    : `https://twitter.com/intent/tweet?text=I%20contributed%20to%20the%20${ceremonyName}${ceremonyName.toLowerCase().includes("trusted") || ceremonyName.toLowerCase().includes("setup") || ceremonyName.toLowerCase().includes("phase2") || ceremonyName.toLowerCase().includes("ceremony") ? "!" : "%20Phase%202%20Trusted%20Setup%20ceremony!"}%20You%20can%20view%20the%20steps%20to%20contribute%20here:%20https://ceremony.galactica.com%20You%20can%20view%20my%20attestation%20here:%20${gistUrl}%20#Ethereum%20#ZKP`
 
 
 /**
@@ -782,11 +780,11 @@ export const generateCustomUrlToTweetAboutParticipation = (
  * @param gistUrl <string> - the Github public attestation gist url.
  */
 export const handleTweetGeneration = async (ceremonyTitle: string, gistUrl: string): Promise<string> => {
-    // Generate a ready to share custom url to tweet about ceremony participation.
-    const tweetUrl = generateCustomUrlToTweetAboutParticipation(ceremonyTitle, gistUrl, false)
+  // Generate a ready to share custom url to tweet about ceremony participation.
+  const tweetUrl = generateCustomUrlToTweetAboutParticipation(ceremonyTitle, gistUrl, false)
 
-    // Automatically open a webpage with the tweet.
-    return tweetUrl
+  // Automatically open a webpage with the tweet.
+  return tweetUrl
 }
 
 /**
@@ -797,22 +795,22 @@ export const handleTweetGeneration = async (ceremonyTitle: string, gistUrl: stri
  * @returns <Promise<any>> - the Github (provider) unique identifier associated to the user.
  */
 export const getGithubProviderUserId = async (githubToken: string): Promise<string | null> => {
-    const response = await fetch("https://api.github.com/user", {
-        method: "GET",
-        headers: {
-            Authorization: `token ${githubToken}`
-        }
-    })
-
-    if (response && response.status === 200) {
-        const data = await response.json(); // Parsing the JSON data
-        if (data && data.login && typeof data.id !== 'undefined') {
-            return `${data.login}-${data.id}`
-        }
-        throw new Error("Data is incomplete")
+  const response = await fetch("https://api.github.com/user", {
+    method: "GET",
+    headers: {
+      Authorization: `token ${githubToken}`
     }
+  })
 
-    throw new Error("No token or failed request")
+  if (response && response.status === 200) {
+    const data = await response.json(); // Parsing the JSON data
+    if (data && data.login && typeof data.id !== 'undefined') {
+      return `${data.login}-${data.id}`
+    }
+    throw new Error("Data is incomplete")
+  }
+
+  throw new Error("No token or failed request")
 }
 
 /**
@@ -821,14 +819,14 @@ export const getGithubProviderUserId = async (githubToken: string): Promise<stri
  * @returns {boolean}
  */
 export const checkIfUserContributed = async (ceremonyId: string): Promise<boolean> => {
-    const user = getAuth(firebaseApp).currentUser
-    if (!user) return false 
-    const circuits = await getCeremonyCircuits(ceremonyId)
-    for (const circuit of circuits) {
-        const hasContributed = await getCircuitContributionsFromContributor(ceremonyId, circuit.id, user.uid)
-        if (hasContributed.length === 0) return false 
-    }
-    return true        
+  const user = getAuth(firebaseApp).currentUser
+  if (!user) return false
+  const circuits = await getCeremonyCircuits(ceremonyId)
+  for (const circuit of circuits) {
+    const hasContributed = await getCircuitContributionsFromContributor(ceremonyId, circuit.id, user.uid)
+    if (hasContributed.length === 0) return false
+  }
+  return true
 }
 
 /**
@@ -836,12 +834,12 @@ export const checkIfUserContributed = async (ceremonyId: string): Promise<boolea
  * @param array {any[]|undefined}
  * @returns {number}
  */
-export const findLargestConstraint = (array: any[]|undefined): number => {
-    if (!array) return 0
-    return array.reduce((max: any, current: any) => {
-        const constraint = current.data.metadata?.constraints ?? 0
-        return Math.max(max, constraint)
-    }, 0)
+export const findLargestConstraint = (array: any[] | undefined): number => {
+  if (!array) return 0
+  return array.reduce((max: any, current: any) => {
+    const constraint = current.data.metadata?.constraints ?? 0
+    return Math.max(max, constraint)
+  }, 0)
 }
 
 /**
@@ -850,19 +848,19 @@ export const findLargestConstraint = (array: any[]|undefined): number => {
  * @returns 
  */
 export const checkGitHubReputation = async (): Promise<boolean> => {
-    const resp = await fetch(`https://api.github.com/user`, {
-        headers: {
-            Authorization: `token ${localStorage.getItem("token")}`
-        }
-    })
+  const resp = await fetch(`https://api.github.com/user`, {
+    headers: {
+      Authorization: `token ${localStorage.getItem("token")}`
+    }
+  })
 
-    if (resp.status !== 200) return false
+  if (resp.status !== 200) return false
 
-    const data = await resp.json()
+  const data = await resp.json()
 
-    if (data.public_repos < minRepos) return false
-    if (data.followers < minFollowers) return false
-    if (data.following < minFollowing) return false
+  if (data.public_repos < minRepos) return false
+  if (data.followers < minFollowers) return false
+  if (data.following < minFollowing) return false
 
-    return true 
+  return true
 }
