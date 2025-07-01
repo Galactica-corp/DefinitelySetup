@@ -47,7 +47,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = () => {
 
   return (
     <>
-      <Joyride
+      {/* <Joyride
         callback={handleJoyrideCallback}
         continuous
         run={runTutorial}
@@ -66,7 +66,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = () => {
             zIndex: 1000
           }
         }}
-      />
+      /> */}
       <VStack alignSelf="stretch" width={"100%"}>
         <Progress
           size="sm"
