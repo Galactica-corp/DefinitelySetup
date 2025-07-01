@@ -97,7 +97,7 @@ const Layout: React.FC<React.PropsWithChildren<{}>> = () => {
           <HStack as={Link} to="/" spacing="24px">
             <LogoIcon w={5} h={5} />
             <Heading fontWeight={"normal"} fontSize={14}>
-              DefinitelySetup
+              Galactica Trusted Setup Ceremony
             </Heading>
           </HStack>
           <HStack spacing="24px" fontSize={14}>
