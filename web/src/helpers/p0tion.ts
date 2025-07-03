@@ -179,7 +179,7 @@ export const handleStartOrResumeContribution = async (
     }
     const { prefix: ceremonyPrefix } = ceremonyData
 
-    const { waitingQueue, prefix: circuitPrefix, sequencePosition } = circuit.data
+    const { waitingQueue, prefix: circuitPrefix, sequencePosition, name: circuitName } = circuit.data
     const { completedContributions } = waitingQueue // = current progress.
 
     const updatedParticipant = await getDocumentById(`ceremonies/${ceremonyId}/participants`, participant.id)
@@ -188,7 +188,7 @@ export const handleStartOrResumeContribution = async (
         return
     }
 
-    setStatus(`You are contributing at circuit #${sequencePosition}`, true)
+    setStatus(`You are contributing at circuit #${sequencePosition} - ${circuitName}`, true)
 
     let updatedParticipantData = updatedParticipant.data()!
 
@@ -207,7 +207,7 @@ export const handleStartOrResumeContribution = async (
 
     let blob: Uint8Array = new Uint8Array()
     if (updatedParticipantData.contributionStep === ParticipantContributionStep.DOWNLOADING || updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus("Downloading zKey", true)
+        setStatus(`Downloading zKey for circuit #${sequencePosition} - ${circuitName}`, true)
         blob = await downloadCeremonyArtifact(bucketName, lastZkeyStorageFilePath, setStatus)
 
         setStatus("Downloaded zKey", false)
@@ -220,7 +220,7 @@ export const handleStartOrResumeContribution = async (
     }
 
     if (updatedParticipantData.contributionStep === ParticipantContributionStep.COMPUTING || updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus("Computing contribution", true)
+        setStatus(`Computing contribution for circuit #${sequencePosition} - ${circuitName}`, true)
 
         // time
         const start = new Date().getTime();
@@ -266,7 +266,7 @@ export const handleStartOrResumeContribution = async (
     }
 
     if (updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus("Uploading contribution", true)
+        setStatus(`Uploading contribution for circuit #${sequencePosition} - ${circuitName}`, true)
         await multiPartUpload(
             bucketName,
             nextZkeyStorageFilePath,
@@ -287,7 +287,7 @@ export const handleStartOrResumeContribution = async (
     }
 
     if (updatedParticipantData.contributionStep === ParticipantContributionStep.VERIFYING) {
-        setStatus("Verifying contribution", true)
+        setStatus(`Verifying contribution for circuit #${sequencePosition} - ${circuitName}`, true)
         try {
             // Execute contribution verification.
             await verifyContribution(
@@ -466,11 +466,12 @@ export const listenToParticipantDocumentChanges = async (
         }
 
         if (changedContributionProgress > 0 && changedContributionProgress <= circuits.length) {
-            const circuit = circuits[changedContributionProgress - 1]
+            const circuitIndex = changedContributionProgress - 1
+            const circuit = circuits[circuitIndex]
 
             if (!circuit.data) return
 
-            const { waitingQueue } = circuit.data
+            const { waitingQueue, name: circuitName } = circuit.data
 
             // Define pre-conditions for different scenarios.
             const isWaitingForContribution = changedStatus === ParticipantStatus.WAITING
@@ -548,7 +549,7 @@ export const listenToParticipantDocumentChanges = async (
 
 
             if (isCurrentContributor && hasResumableStep && startingOrResumingContribution) {
-                setStatus("Starting or resuming contribution", true)
+                setStatus(`Starting or resuming contribution (circuit #${circuitIndex + 1} - ${circuitName})`, true)
                 await handleStartOrResumeContribution(ceremonyId, circuit, changedParticipant, participantProviderId, setStatus)
             } else if (isWaitingForContribution) {
                 listenToCeremonyCircuitDocumentChanges(ceremonyId, participant.id, circuit, setStatus)
