@@ -781,6 +781,7 @@ export const generateCustomUrlToTweetAboutParticipation = (
  */
 export const handleTweetGeneration = async (ceremonyTitle: string, gistUrl: string): Promise<string> => {
   // Generate a ready to share custom url to tweet about ceremony participation.
+  console.log(`Generating tweet url for ${ceremonyTitle} with gist url ${gistUrl}`)
   const tweetUrl = generateCustomUrlToTweetAboutParticipation(ceremonyTitle, gistUrl, false)
 
   // Automatically open a webpage with the tweet.
