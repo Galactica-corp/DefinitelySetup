@@ -1,7 +1,7 @@
 {
   "projects": {
-    "prod": "galactica-ceremony-test",
-    "dev": "galactica-ceremony-test",
-    "default": "galactica-ceremony-test"
+    "prod": "galactica-ceremony",
+    "dev": "galactica-ceremony",
+    "default": "galactica-ceremony"
   }
 }
