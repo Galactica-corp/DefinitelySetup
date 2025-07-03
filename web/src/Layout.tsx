@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
   VStack,
@@ -18,55 +18,22 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { StateContext } from "./context/StateContext";
 import { ColorModeSwitch } from "./components/ColorModeSwitch";
-import Joyride, { STATUS } from "react-joyride";
-import { searchBarSteps } from "./helpers/utils";
 import { LogoIcon } from "./assets/LogoIcon";
 import { Login } from "./components/Login";
 
 const Layout: React.FC<React.PropsWithChildren<{}>> = () => {
   const { search, setSearch, loading, setLoading } = useContext(StateContext);
-  const [runTutorial, setRunTutorial] = useState(false);
-
-  // handle the callback from joyride
-  const handleJoyrideCallback = (data: any) => {
-    const { status } = data;
-    if ([STATUS.FINISHED, STATUS.SKIPPED].includes(status)) {
-      // Need to set our running state to false, so we can restart if we click start again.
-      setRunTutorial(false);
-    }
-  };
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setLoading(false);
     }, 3000);
 
-    setRunTutorial(true);
     return () => clearTimeout(timer);
   }, []);
 
   return (
     <>
-      {/* <Joyride
-        callback={handleJoyrideCallback}
-        continuous
-        run={runTutorial}
-        scrollToFirstStep
-        showProgress
-        showSkipButton
-        steps={searchBarSteps}
-        styles={{
-          options: {
-            arrowColor: "red",
-            backgroundColor: "white",
-            overlayColor: "rgba(79, 26, 0, 0.4)",
-            primaryColor: "red",
-            textColor: "black",
-            width: "500px",
-            zIndex: 1000
-          }
-        }}
-      /> */}
       <VStack alignSelf="stretch" width={"100%"}>
         <Progress
           size="sm"
