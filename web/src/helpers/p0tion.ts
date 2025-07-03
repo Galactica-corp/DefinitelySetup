@@ -150,7 +150,7 @@ export const contribute = async (ceremonyId: string, setStatus: (message: string
         const participant = await getDocumentById(`ceremonies/${ceremonyId}/participants`, user.uid)
         await listenToParticipantDocumentChanges(participant, ceremonyId, participantProviderId!, token, setStatus)
     } catch (error: any) {
-        setStatus(`Unexpected error during contribution: ${JSON.stringify(error)}`, false)
+        setStatus(`Unexpected error during contribution: ${JSON.stringify(error)}, (Please wait for the server to reset your contribution and try again later)`, false)
     }
 
 }
@@ -179,7 +179,7 @@ export const handleStartOrResumeContribution = async (
     }
     const { prefix: ceremonyPrefix } = ceremonyData
 
-    const { waitingQueue, prefix: circuitPrefix, sequencePosition, name: circuitName } = circuit.data
+    const { waitingQueue, prefix: circuitPrefix, sequencePosition, name: circuitName, } = circuit.data
     const { completedContributions } = waitingQueue // = current progress.
 
     const updatedParticipant = await getDocumentById(`ceremonies/${ceremonyId}/participants`, participant.id)
@@ -237,7 +237,7 @@ export const handleStartOrResumeContribution = async (
                     .join(''),
             )
         } catch (error: any) {
-            setStatus(`Error computing, ${error.toString()}`, false)
+            setStatus(`Error computing, ${error.toString()}, (Please wait for the server to reset your contribution and try again later)`, false)
 
         }
 
@@ -299,7 +299,7 @@ export const handleStartOrResumeContribution = async (
             )
             setStatus("Contribution is valid", false)
         } catch (error: any) {
-            setStatus(`Error verifying, ${error.toString()}`, false)
+            setStatus(`Error verifying, ${error.toString()}, (Please wait for the server to reset your contribution and try again later)`, false)
         }
     }
 
