@@ -205,68 +205,61 @@ export const handleStartOrResumeContribution = async (
     // Get ceremony bucket name.
     const bucketName = getBucketName(ceremonyPrefix, bucketPostfix)
 
-    let blob: Uint8Array = new Uint8Array()
-    if (updatedParticipantData.contributionStep === ParticipantContributionStep.DOWNLOADING || updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus(`Downloading zKey for circuit #${sequencePosition} - ${circuitName}`, true)
-        blob = await downloadCeremonyArtifact(bucketName, lastZkeyStorageFilePath, setStatus)
-
-        setStatus("Downloaded zKey", false)
-        // progress to the next step
-        await progressToNextContributionStep(ceremonyId)
-
-        await sleep(10000)
-
-        updatedParticipantData = await getLatestUpdatesFromParticipant(ceremonyId, participant.id)
+    setStatus(`Downloading zKey for circuit #${sequencePosition} - ${circuitName}`, true)
+    let blob: Uint8Array = await downloadCeremonyArtifact(bucketName, lastZkeyStorageFilePath, setStatus)
+    setStatus("Downloaded zKey", false)
+    if (updatedParticipantData.contributionStep === ParticipantContributionStep.DOWNLOADING) {
+        updatedParticipantData = await transitionWithUserInfo(participant.id, updatedParticipantData.contributionStep, ceremonyId, setStatus)
     }
 
-    if (updatedParticipantData.contributionStep === ParticipantContributionStep.COMPUTING || updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus(`Computing contribution for circuit #${sequencePosition} - ${circuitName}`, true)
+    setStatus(`Computing contribution for circuit #${sequencePosition} - ${circuitName}`, true)
 
-        // time
-        const start = new Date().getTime();
-        let output: any
-        // contribute
-        try {
-            output = await snarkjs.zKey.contribute(
-                blob,
-                nextZKey,
-                contributorIdentifier,
-                Array(32)
-                    .fill(null)
-                    .map(() => randomf(2n ** 256n))
-                    .join(''),
-            )
-        } catch (error: any) {
-            setStatus(`Error computing, ${error.toString()}, (Please wait for the server to reset your contribution and try again later)`, false)
+    // time
+    const start = new Date().getTime();
+    let output: any
+    // contribute
+    try {
+        output = await snarkjs.zKey.contribute(
+            blob,
+            nextZKey,
+            contributorIdentifier,
+            Array(32)
+                .fill(null)
+                .map(() => randomf(2n ** 256n))
+                .join(''),
+        )
+    } catch (error: any) {
+        setStatus(`Error computing, ${error.toString()}, (Please wait for the server to reset your contribution and try again later)`, false)
+    }
 
-        }
+    // take hash
+    const hash = formatHash(output, "Contribution Hash: ")
 
-        // take hash
-        const hash = formatHash(output, "Contribution Hash: ")
+    const end = new Date().getTime();
+    const time = end - start;
+    setStatus(`Computed zKey in: ${time}ms`, false);
+    await sleep(1000)
+    setStatus(`Uploading hash and time taken`, true);
 
-        const end = new Date().getTime();
-        const time = end - start;
-        setStatus(`Computed zKey in: ${time}ms`, false);
-
-        // upload hash and time taken
+    // upload hash and time taken
+    try {
         await permanentlyStoreCurrentContributionTimeAndHash(
             ceremony.id,
             time,
             hash
         )
-
-        await sleep(5000)
-
-        await progressToNextContributionStep(ceremony.id)
-        await sleep(1000)
-
-        // Refresh most up-to-date data from the participant document.
-        updatedParticipantData = await getLatestUpdatesFromParticipant(ceremony.id, participant.id)
-
+    } catch (error: any) {
+        setStatus(`Error uploading hash and time taken, ${error.toString()}, (Trying to continue...)`, false)
     }
 
-    if (updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
-        setStatus(`Uploading contribution for circuit #${sequencePosition} - ${circuitName}`, true)
+    await sleep(5000)
+
+    if (updatedParticipantData.contributionStep === ParticipantContributionStep.COMPUTING) {
+        updatedParticipantData = await transitionWithUserInfo(participant.id, updatedParticipantData.contributionStep, ceremonyId, setStatus)
+    }
+
+    setStatus(`Uploading contribution for circuit #${sequencePosition} - ${circuitName}`, true)
+    try {
         await multiPartUpload(
             bucketName,
             nextZkeyStorageFilePath,
@@ -278,12 +271,14 @@ export const handleStartOrResumeContribution = async (
 
         setStatus("Uploaded contribution", false)
         await sleep(1000)
+    } catch (error: any) {
+        setStatus(`Error uploading contribution. Please reload and try again. Error: ${error.toString()}`, false)
+        throw error
+    }
 
-        await progressToNextContributionStep(ceremonyId)
-        await sleep(1000)
 
-        // Refresh most up-to-date data from the participant document.
-        updatedParticipantData = await getLatestUpdatesFromParticipant(ceremonyId, participant.id)
+    if (updatedParticipantData.contributionStep === ParticipantContributionStep.UPLOADING) {
+        updatedParticipantData = await transitionWithUserInfo(participant.id, updatedParticipantData.contributionStep, ceremonyId, setStatus)
     }
 
     if (updatedParticipantData.contributionStep === ParticipantContributionStep.VERIFYING) {
@@ -303,6 +298,31 @@ export const handleStartOrResumeContribution = async (
         }
     }
 
+}
+
+/**
+ * Progress to the next contribution step
+ * @param participantId <string> - the unique identifier of the participant.
+ * @param currentContributionStep <string> - the current contribution step.
+ * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param setStatus <function> - the function to set the status.
+ * @returns <FirebaseDocumentInfo> - the updated participant data.
+ */
+async function transitionWithUserInfo(
+    participantId: string,
+    currentContributionStep: string,
+    ceremonyId: string,
+    setStatus: (message: string, loading?: boolean, attestationLink?: string) => void
+) {
+    setStatus(`Progressing to the next contribution step (from: ${currentContributionStep})`, true)
+    await progressToNextContributionStep(ceremonyId)
+
+    await sleep(5000)
+
+    const updatedParticipantData = await getLatestUpdatesFromParticipant(ceremonyId, participantId)
+    setStatus(`Step after update: ${updatedParticipantData.contributionStep}`, false)
+
+    return updatedParticipantData
 }
 
 /**
@@ -498,8 +518,8 @@ export const listenToParticipantDocumentChanges = async (
             const alreadyContributedToEveryCeremonyCircuit =
                 changedStatus === ParticipantStatus.DONE &&
                 changedContributionStep === ParticipantContributionStep.COMPLETED &&
-                changedContributionProgress === circuits.length &&
-                changedContributions.length === circuits.length
+                changedContributionProgress >= circuits.length &&
+                changedContributions.length >= circuits.length
 
             const noTemporaryContributionData = !prevTempContributionData && !changedTempContributionData
 
