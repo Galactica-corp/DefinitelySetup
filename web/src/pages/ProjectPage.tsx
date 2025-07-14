@@ -130,7 +130,7 @@ const ProjectPage: React.FC = () => {
     !project || isLoading
       ? ""
       : `phase2cli auth && phase2cli contribute -c ${project?.ceremony.data.prefix}`;
-  const installCommand = `npm install -g @p0tion/phase2cli`;
+  const installCommand = `npm install -g @galactica-net/phase2cli`;
   const authCommand = `phase2cli auth`;
   const beaconValue = finalBeacon?.beacon
   const beaconHash = finalBeacon?.beaconHash
